@@ -1,3 +1,4 @@
+#! /usr/bin/env python3
 import re
 import sys
 f = sys.argv[0].replace('/vlog_tb_gen.py','')
@@ -63,7 +64,7 @@ class WriteTestBench(SourceFileProcess):
             if p.pDir == '':
                 tb += p.ifdef + p.defvalue + p.endif + '\n'
             else:
-                tb += '    .'+p.pName + '    ('+p.pName+'    ),\n'
+                tb += '    .'+p.pName + '   ('+p.pName+'   ),\n'
         tb = tb[0:-2] + ');\n\n'
 
         # Generate clock
@@ -77,20 +78,7 @@ class WriteTestBench(SourceFileProcess):
         tb += '    #1000; $finish;\n'
         tb += 'end\n\n'
 
-        tb += 'initial begin\n'
-        tb += "`ifdef DUMP_FSDB\n"
-        tb += '   $fsdbDumpfile("wave.fsdb");\n'
-        tb += "   $fsdbDumpvars();\n"
-        tb += "`elsif DUMP_SHM\n"
-        tb += '   $shm_open("wave.shm);\n'
-        tb += '   $shm_probe(' + self.moduleName + '_tb,"AS");\n'
-        tb += "`elsif DUMP_VCD\n"
-        tb += '   $dumpfile("wave.vcd");\n'
-        tb += "   $dumpvars()\n"
-        tb += '`else\n'
-        tb += '    $display("No dump andy waves")\n'
-        tb += "`endif\n"
-        tb += "end\n\n"
+        tb += self.gen_dumpfile()
 
         tb += '`include "testcase.v"\n\n'
 
@@ -99,6 +87,23 @@ class WriteTestBench(SourceFileProcess):
         fout = open(self.moduleName + '_tb.v', 'wt')
         fout.write(tb)
         fout.close()
+    def gen_dumpfile(self):
+        tb = ''
+        tb += 'initial begin\n'
+        tb += "`ifdef DUMP_FSDB\n"
+        tb += '   $fsdbDumpfile("wave.fsdb");\n'
+        tb += "   $fsdbDumpvars();\n"
+        tb += "`elsif DUMP_SHM\n"
+        tb += '   $shm_open("wave.shm");\n'
+        tb += '   $shm_probe(' + self.moduleName + '_tb,"AS");\n'
+        tb += "`elsif DUMP_VCD\n"
+        tb += '   $dumpfile("wave.vcd");\n'
+        tb += "   $dumpvars()\n"
+        tb += '`else\n'
+        tb += '    $display("No dump andy waves")\n'
+        tb += "`endif\n"
+        tb += "end\n\n"
+        return tb
 
 if __name__ == '__main__':
     flen = len(sys.argv)

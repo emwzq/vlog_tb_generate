@@ -142,6 +142,8 @@ class SourceFileProcess():
                                             pWidth_end  =self.pWidth_end,
                                             pType       =self.pType))
                 self.pName = ''
+                self.pWidth_start = ''
+                self.pWidth_end = ''
                 print('debug - 5')
             elif (word=='`'):
                 word = self.word_list.pop(0)

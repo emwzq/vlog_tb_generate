@@ -9,8 +9,8 @@ reg     [DW-1:0]    dout    = 0;
 `ifdef aa
 reg     [DW-1:0]    dout_en = 0;
 `endif
-reg     [DW-1:0]    clk     = 0;
-reg     [DW-1:0]    rst_n   = 0;
+reg                 clk     = 0;
+reg                 rst_n   = 0;
 
 
 iopad  u_iopad(
